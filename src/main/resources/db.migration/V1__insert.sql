@@ -1,0 +1,1 @@
+insert into testflywayscript VALUES(2, 'name', 'email');

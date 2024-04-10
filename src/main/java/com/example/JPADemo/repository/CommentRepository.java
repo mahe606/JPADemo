@@ -11,5 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface   CommentRepository extends JpaRepository<Comment, Integer> {
+    //method to find by ID
     Optional<List<Comment>> findAllByUserId(String userId, Pageable page);
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -36,7 +37,7 @@ public class CommentController {
     public ResponseEntity<List<CommentDTO>> getAllComments(@RequestParam(defaultValue = "5", required = false) Integer pageSize
             , @RequestParam(defaultValue = "0", required = false) Integer pageNumber) {
 
-        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("UUID").descending());
         List<CommentDTO> commentDTOS = service.getAllComments(page);
         return new ResponseEntity<>(commentDTOS, HttpStatus.OK);
     }
@@ -45,8 +46,8 @@ public class CommentController {
     public ResponseEntity<List<CommentDTO>> getAllCommentsByUserId(@PathVariable String userId, @RequestParam(defaultValue = "5", required = false) Integer pageSize
             , @RequestParam(defaultValue = "0", required = false) Integer pageNumber) {
 
-        Pageable paging = PageRequest.of(pageNumber, pageSize);
-        List<CommentDTO> commentsDTOs = service.getCommentsByUserId(userId, paging);
+        Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("UUID").descending());
+        List<CommentDTO> commentsDTOs = service.getCommentsByUserId(userId, page);
         return new ResponseEntity<List<CommentDTO>>(commentsDTOs, HttpStatus.ACCEPTED);
     }
 }

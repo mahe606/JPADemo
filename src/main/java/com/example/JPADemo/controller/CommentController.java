@@ -2,15 +2,14 @@ package com.example.JPADemo.controller;
 
 
 import com.example.JPADemo.dto.CommentDTO;
+import com.example.JPADemo.dto.CommentsDTO;
 import com.example.JPADemo.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,5 +48,36 @@ public class CommentController {
         Pageable page = PageRequest.of(pageNumber, pageSize, Sort.by("UUID").descending());
         List<CommentDTO> commentsDTOs = service.getCommentsByUserId(userId, page);
         return new ResponseEntity<List<CommentDTO>>(commentsDTOs, HttpStatus.ACCEPTED);
+    }
+
+
+    @GetMapping("/search")
+    public ResponseEntity<CommentsDTO> searchUserCommentsByFilters(
+            @RequestParam(defaultValue= "0", required = false)
+               Integer page ,
+           @RequestParam(defaultValue= "5", required = false)
+               Integer pageSize,
+           @RequestParam(  required = true)
+               String userId,
+           @RequestParam( defaultValue= "", required = false)
+               String searchText,
+           @RequestParam( defaultValue= "", required = false)
+               String fromDate,
+           @RequestParam( defaultValue= "", required = false)
+               String toDate,
+           @RequestParam( defaultValue= "false", required = false)
+               String checkIsLongTermUser
+    ){
+
+        Pageable paging = PageRequest.of(page, pageSize);
+
+        CommentsDTO commentsDTOs =
+                service.searchUserCommentsByFilters(
+                        userId,
+                        searchText,
+                        fromDate,
+                        toDate,
+                        Boolean.valueOf(checkIsLongTermUser),
+                        paging);    return new ResponseEntity<>( commentsDTOs, HttpStatus.ACCEPTED);
     }
 }

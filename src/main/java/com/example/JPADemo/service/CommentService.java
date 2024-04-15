@@ -2,10 +2,13 @@ package com.example.JPADemo.service;
 
 
 import com.example.JPADemo.dto.CommentDTO;
+import com.example.JPADemo.dto.CommentsDTO;
 import com.example.JPADemo.entity.Comment;
 import com.example.JPADemo.repository.CommentRepository;
+import com.example.JPADemo.specification.CommentSpecification;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,9 @@ public class CommentService {
 
     @Autowired
     CommentRepository repository;
+
+    @Autowired
+    CommentSpecification commentSpecification;
 
     ModelMapper mapper = new ModelMapper();
 
@@ -38,5 +44,29 @@ public class CommentService {
         if (comments.isPresent())
             return comments.get().stream().map(comment -> mapper.map(comment, CommentDTO.class)).collect(Collectors.toList());
         return null;
+    }
+
+
+    public CommentsDTO searchUserCommentsByFilters(String userId,
+                                                   String searchText,
+                                                   String fromDate,
+                                                   String toDate,
+                                                   boolean checkIsLongTermUser,
+                                                   Pageable page){
+        Page<Comment> filteredComments =
+                repository.findAll(
+                        commentSpecification.conditionalSearchForUser(
+                                searchText,
+                                fromDate,
+                                toDate,
+                                userId,
+                                checkIsLongTermUser),
+                        page);
+        long totalElements = filteredComments.getTotalElements();
+        int totalPages = filteredComments.getTotalPages();
+
+        return CommentsDTO.builder()
+                .comments(filteredComments.get().map(comment -> mapper.map(comment, CommentDTO.class)).collect(Collectors.toList()))
+                        .pages(totalPages).totalCount(totalElements).build();
     }
 }

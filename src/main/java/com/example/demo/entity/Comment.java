@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
@@ -26,6 +27,7 @@ public class Comment {
     private String userId;
 
     @Column(nullable = false)
+    @NotNull(message = "Enter a valid comment")
     private String description;
 
     @Column(nullable = false)

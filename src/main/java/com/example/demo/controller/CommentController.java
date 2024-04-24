@@ -4,6 +4,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.CommentDTO;
 import com.example.demo.dto.CommentsDTO;
 import com.example.demo.service.CommentService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/comments")
+@Slf4j
 public class CommentController {
 
     @Autowired
@@ -26,6 +28,7 @@ public class CommentController {
 
     @PostMapping("")
     public ResponseEntity<CommentDTO> createComment(@RequestBody CommentDTO dto) {
+        log.info("###### Entered the Post API call for comments  info");
         dto.setCreatedDate(new Date());
         CommentDTO newDTO = service.saveComment(dto);
         return new ResponseEntity<CommentDTO>(newDTO, HttpStatus.CREATED);
